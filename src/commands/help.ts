@@ -1,5 +1,6 @@
 import {
   ChatInputCommandInteraction,
+  MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
@@ -9,9 +10,7 @@ export const data = new SlashCommandBuilder()
   .setDescription("Menampilkan daftar perintah Noko");
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-  const isModerator = interaction.memberPermissions?.has(
-    PermissionFlagsBits.KickMembers,
-  );
+  const permissions = interaction.memberPermissions;
 
   const content = [
     "🦌 **Noko — PKH Community Bot**",
@@ -20,21 +19,42 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     "`/help` — Menampilkan bantuan",
     "`/rules` — Menampilkan peraturan server",
     "`/profile` — Menampilkan profil member",
+    "`/serverinfo` — Menampilkan informasi server PKH",
+    "`/userinfo` — Menampilkan informasi member",
+    "`/avatar` — Menampilkan avatar member",
+    "`/poll` — Membuat polling di server",
+    "`/remind` — Membuat pengingat",
   ];
 
-  if (isModerator) {
-    content.push(
-      "",
-      "🛡️ **Perintah Moderasi**",
-      "`/kick` — Mengeluarkan member",
-      "`/ban` — Memblokir member",
+  const moderationCommands: string[] = [];
+
+  if (permissions?.has(PermissionFlagsBits.KickMembers)) {
+    moderationCommands.push("`/kick` — Mengeluarkan member");
+  }
+
+  if (permissions?.has(PermissionFlagsBits.BanMembers)) {
+    moderationCommands.push("`/ban` — Memblokir member");
+  }
+
+  if (permissions?.has(PermissionFlagsBits.ModerateMembers)) {
+    moderationCommands.push(
       "`/timeout` — Memberikan timeout",
       "`/warn` — Memberikan peringatan",
     );
   }
 
+  if (permissions?.has(PermissionFlagsBits.ManageMessages)) {
+    moderationCommands.push(
+      "`/announce` — Mengirim pengumuman ke channel server",
+    );
+  }
+
+  if (moderationCommands.length > 0) {
+    content.push("", "🛡️ **Perintah Moderasi**", ...moderationCommands);
+  }
+
   await interaction.reply({
     content: content.join("\n"),
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 }
