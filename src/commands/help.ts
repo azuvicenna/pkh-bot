@@ -25,6 +25,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     "`/poll` — Membuat polling di server",
     "`/remind` — Membuat pengingat",
     "`/github` — Menampilkan profil dan kontribusi GitHub",
+    "`/huggingface` — Menampilkan profil publik Hugging Face",
+    "`/kaggle` — Menampilkan profil publik Kaggle",
+    "`/dockerhub` — Menampilkan profil dan repositori Docker Hub",
     "`/project` — Memamerkan proyek ke channel showcase",
     "`/ai` — Bertanya kepada asisten AI Noko",
   ];

@@ -12,6 +12,9 @@ import * as pollCommand from "./poll";
 import * as remindCommand from "./remind";
 import * as announceCommand from "./announce";
 import * as githubCommand from "./github";
+import * as huggingfaceCommand from "./huggingface";
+import * as kaggleCommand from "./kaggle";
+import * as dockerhubCommand from "./dockerhub";
 import * as projectCommand from "./project";
 import * as aiCommand from "./ai";
 
@@ -30,6 +33,9 @@ export const commands = [
   remindCommand,
   announceCommand,
   githubCommand,
+  huggingfaceCommand,
+  kaggleCommand,
+  dockerhubCommand,
   projectCommand,
   aiCommand,
 ];
