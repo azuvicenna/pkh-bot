@@ -24,6 +24,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     "`/avatar` — Menampilkan avatar member",
     "`/poll` — Membuat polling di server",
     "`/remind` — Membuat pengingat",
+    "`/github` — Menampilkan profil dan kontribusi GitHub",
+    "`/project` — Memamerkan proyek ke channel showcase",
+    "`/ai` — Bertanya kepada asisten AI Noko",
   ];
 
   const moderationCommands: string[] = [];

@@ -11,6 +11,9 @@ import * as avatarCommand from "./avatar";
 import * as pollCommand from "./poll";
 import * as remindCommand from "./remind";
 import * as announceCommand from "./announce";
+import * as githubCommand from "./github";
+import * as projectCommand from "./project";
+import * as aiCommand from "./ai";
 
 export const commands = [
   helpCommand,
@@ -26,4 +29,7 @@ export const commands = [
   pollCommand,
   remindCommand,
   announceCommand,
+  githubCommand,
+  projectCommand,
+  aiCommand,
 ];
