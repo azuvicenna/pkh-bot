@@ -80,10 +80,13 @@ client.on("guildMemberAdd", async (member) => {
           `Gagal mengirim pesan welcome: channel ${channelId} tidak ditemukan atau bukan channel teks.`,
         );
       } else {
+        const rulesChannelId =
+          process.env.RULES_CHANNEL_ID || "1557675333564633098";
+
         await channel.send({
           content:
             `👋 Selamat datang ${member} di **${member.guild.name}**!\n\n` +
-            `🦌 Jangan lupa baca <#1557675333564633098> dan pilih role kamu.\n` +
+            `🦌 Jangan lupa baca <#${rulesChannelId}> dan pilih role kamu.\n` +
             `💻 Semoga betah dan selamat bergabung di PKH!`,
           allowedMentions: { parse: [], users: [member.id] },
         });

@@ -1,11 +1,10 @@
 import {
   ChatInputCommandInteraction,
-  DiscordAPIError,
   EmbedBuilder,
   MessageFlags,
-  RESTJSONErrorCodes,
   SlashCommandBuilder,
 } from "discord.js";
+import { fetchGuildMember } from "../services/mod-log";
 
 export const data = new SlashCommandBuilder()
   .setName("userinfo")
@@ -20,19 +19,7 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
   const targetUser = interaction.options.getUser("member") ?? interaction.user;
 
-  const member = await interaction.guild?.members
-    .fetch(targetUser.id)
-    .catch((error: unknown) => {
-      if (
-        error instanceof DiscordAPIError &&
-        (error.code === RESTJSONErrorCodes.UnknownMember ||
-          error.code === RESTJSONErrorCodes.UnknownUser)
-      ) {
-        return null;
-      }
-
-      throw error;
-    });
+  const member = await fetchGuildMember(interaction.guild, targetUser.id);
 
   if (!member) {
     await interaction.reply({

@@ -1,30 +1,17 @@
 import {
   ChatInputCommandInteraction,
-  DiscordAPIError,
   EmbedBuilder,
   MessageFlags,
-  RESTJSONErrorCodes,
   SlashCommandBuilder,
 } from "discord.js";
+import { fetchGuildMember } from "../services/mod-log";
 
 export const data = new SlashCommandBuilder()
   .setName("profile")
   .setDescription("Menampilkan profil member");
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-  const member = await interaction.guild?.members
-    .fetch(interaction.user.id)
-    .catch((error: unknown) => {
-      if (
-        error instanceof DiscordAPIError &&
-        (error.code === RESTJSONErrorCodes.UnknownMember ||
-          error.code === RESTJSONErrorCodes.UnknownUser)
-      ) {
-        return null;
-      }
-
-      throw error;
-    });
+  const member = await fetchGuildMember(interaction.guild, interaction.user.id);
 
   if (!member) {
     await interaction.reply({
@@ -36,8 +23,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   }
 
   const embed = new EmbedBuilder()
+    .setColor(0xffdecc)
     .setTitle(`👤 ${member.displayName}`)
-    .setThumbnail(member.user.displayAvatarURL())
+    .setThumbnail(member.displayAvatarURL({ size: 256 }))
     .addFields(
       {
         name: "Username",
@@ -55,7 +43,9 @@ export async function execute(interaction: ChatInputCommandInteraction) {
           ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:F>`
           : "Tidak diketahui",
       },
-    );
+    )
+    .setFooter({ text: "Noko • PKH Community" })
+    .setTimestamp();
 
   await interaction.reply({
     embeds: [embed],

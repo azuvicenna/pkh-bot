@@ -12,8 +12,13 @@ if (!token || !clientId || !guildId) {
 
 const rest = new REST({ version: "10" }).setToken(token);
 
-await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
-  body: commands.map((command) => command.data.toJSON()),
-});
+try {
+  await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+    body: commands.map((command) => command.data.toJSON()),
+  });
 
-console.log("✅ Slash commands deployed");
+  console.log("✅ Slash commands deployed");
+} catch (error) {
+  console.error("Gagal melakukan deploy slash commands:", error);
+  process.exit(1);
+}

@@ -1,4 +1,5 @@
 import {
+  ChannelType,
   ChatInputCommandInteraction,
   EmbedBuilder,
   MessageFlags,
@@ -18,7 +19,7 @@ export const data = new SlashCommandBuilder()
     option
       .setName("channel")
       .setDescription("Channel tujuan pengumuman")
-      .addChannelTypes(0)
+      .addChannelTypes(ChannelType.GuildText)
       .setRequired(true),
   )
   .addStringOption((option) =>
