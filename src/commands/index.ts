@@ -1,5 +1,6 @@
 import * as helpCommand from "./help";
 import * as rulesCommand from "./rules";
+import * as daftarCommand from "./daftar";
 import * as profileCommand from "./profile";
 import * as kickCommand from "./kick";
 import * as banCommand from "./ban";
@@ -21,6 +22,7 @@ import * as aiCommand from "./ai";
 export const commands = [
   helpCommand,
   rulesCommand,
+  daftarCommand,
   profileCommand,
   kickCommand,
   banCommand,

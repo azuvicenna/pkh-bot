@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { Client, Collection, GatewayIntentBits, MessageFlags } from "discord.js";
 import { commands } from "./commands";
+import { antiSpamService } from "./services/anti-spam";
 import { handlePollButton } from "./services/poll";
 
 const token = process.env.DISCORD_TOKEN;
@@ -10,7 +11,11 @@ if (!token) {
 }
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+  ],
 });
 
 const commandCollection = new Collection<string, (typeof commands)[number]>();
@@ -41,6 +46,12 @@ client.on("interactionCreate", async (interaction) => {
     const command = commandCollection.get(interaction.commandName);
 
     if (!command) {
+      return;
+    }
+
+    const spamCheck = await antiSpamService.handleCommand(interaction);
+
+    if (!spamCheck.allowed) {
       return;
     }
 
@@ -82,35 +93,21 @@ client.on("guildMemberAdd", async (member) => {
       } else {
         const rulesChannelId =
           process.env.RULES_CHANNEL_ID || "1557675333564633098";
+        const registrationChannelId =
+          process.env.REGISTRATION_CHANNEL_ID || "1557675408537813064";
+        const roleMention = roleId ? `<@&${roleId}>` : "**Warga PKH**";
 
         await channel.send({
           content:
             `👋 Selamat datang ${member} di **${member.guild.name}**!\n\n` +
-            `🦌 Jangan lupa baca <#${rulesChannelId}> dan pilih role kamu.\n` +
-            `💻 Semoga betah dan selamat bergabung di PKH!`,
+            `📜 Jangan lupa baca peraturan di <#${rulesChannelId}>.\n` +
+            `📝 Silakan buka channel pendaftaran <#${registrationChannelId}> agar bisa mendapatkan role ${roleMention}.\n\n` +
+            `💻 Semoga betah dan selamat bergabung di PKH! 🦌`,
           allowedMentions: { parse: [], users: [member.id] },
         });
       }
     } catch (error) {
       console.error("Gagal mengirim pesan welcome:", error);
-    }
-  }
-
-  if (roleId) {
-    try {
-      const role =
-        member.guild.roles.cache.get(roleId) ??
-        (await member.guild.roles.fetch(roleId));
-
-      if (!role) {
-        console.error(
-          `Gagal memberikan auto-role: role ${roleId} tidak ditemukan.`,
-        );
-      } else {
-        await member.roles.add(role);
-      }
-    } catch (error) {
-      console.error("Gagal memberikan auto-role:", error);
     }
   }
 });
@@ -140,6 +137,14 @@ client.on("guildMemberRemove", async (member) => {
   }
 });
 
+client.on("messageCreate", async (message) => {
+  try {
+    await antiSpamService.handleMessage(message);
+  } catch (error) {
+    console.error("Gagal memproses anti-spam pesan:", error);
+  }
+});
+
 let isShuttingDown = false;
 
 async function shutdown(signal: NodeJS.Signals) {
@@ -149,6 +154,8 @@ async function shutdown(signal: NodeJS.Signals) {
 
   isShuttingDown = true;
   console.log(`Menerima sinyal ${signal}, menghentikan Noko...`);
+
+  antiSpamService.destroy();
 
   try {
     await client.destroy();

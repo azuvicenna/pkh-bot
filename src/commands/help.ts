@@ -18,6 +18,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     "👤 **Perintah Member**",
     "`/help` — Menampilkan bantuan",
     "`/rules` — Menampilkan peraturan server",
+    "`/daftar` — Mendaftar sebagai Warga PKH",
     "`/profile` — Menampilkan profil member",
     "`/serverinfo` — Menampilkan informasi server PKH",
     "`/userinfo` — Menampilkan informasi member",
